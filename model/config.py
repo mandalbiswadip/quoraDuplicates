@@ -23,7 +23,7 @@ class Config:
 
     epoch = 100
     batch_size = 128
-    saving_freq = 10
+    saving_freq = 2
     summary_freq = 10
 
     save_dir = PROJECT_HOME + '/models_weights/'

@@ -201,7 +201,7 @@ class Model:
         for i in range(config.epoch):
             self.run_epoch(train_data, dev_data, i)
 
-            if i % config.saving_freq:
+            if i % config.saving_freq==0:
                 self.save_session()
 
     def get_feed_dict(self,
