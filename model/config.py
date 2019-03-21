@@ -11,7 +11,7 @@ class Config:
         pass
 
     n_hidden = 128
-    n_layers = 4
+    n_layers = 5
     embedding_size = 300
     n_tags = 2
     # max_sent_len = 70
@@ -20,7 +20,7 @@ class Config:
     lr = 0.01
     decay_step = 1000
     decay_rate = 0.9
-    keep_prob = 0.9
+    keep_prob = 0.7
 
     epoch = 100
     batch_size = 256
