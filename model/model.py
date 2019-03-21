@@ -29,7 +29,10 @@ class Model:
         cells = []
         for _ in range(config.n_layers):
             cell = tf.nn.rnn_cell.LSTMCell(config.n_hidden)
-            cells.append(cell)
+            dropout_cell = tf.nn.rnn_cell.DropoutWrapper(cell=cell,
+                                                         input_keep_prob=config.dropout_prob,
+                                                         output_keep_prob=config.dropout_prob)
+            cells.append(dropout_cell)
         return cells
 
     def add_lstm_op(self):
