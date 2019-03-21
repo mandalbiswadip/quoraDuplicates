@@ -73,7 +73,7 @@ class Model:
 
             self.logits = tf.matmul(self.state, W) + b
             self.pred = tf.nn.softmax(self.logits)
-            self.is_duplicate = tf.argmax(self.pred)
+            self.is_duplicate = tf.argmax(self.pred, axis=-1)
 
     def add_loss_op(self):
         with tf.variable_scope('loss'):
