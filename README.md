@@ -12,10 +12,15 @@ curl -X POST 'http://0.0.0.0/?sentence1=This%20is%20sentence%201.&sentence2=This
 
 #### Network Architechture
 
-Bidirectional-LSTM. Concat the final states from the model for both the sentences and apply a fully-connected layer to get the classification layer
+Bidirectional-LSTM. Concat the final states from the model for both the sentences and apply a fully-connected layer to get the classification layer.
+Entopy has been used as a loss function for the same.
 
 #### word embedding source
 
 [Google word2vec](https://code.google.com/archive/p/word2vec/)
 
 
+##### Baseline accuracy:
+Train accuracy:
+
+Test accuracy:

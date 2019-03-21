@@ -27,7 +27,7 @@ dup_dict = {
 # model.restore_session(config.save_dir)
 
 
-@app.route('/<sentence1>&<sentence2>', methods=['GET','POST'])
+@app.route('/?sentence1=<sentence1>&sentence2=<sentence2>', methods=['GET','POST'])
 def get_if_duplicate(sentence1, sentence2):
     is_duplicate = 0
     try:
