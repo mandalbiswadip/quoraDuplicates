@@ -10,7 +10,7 @@ class Config:
     def __init__(self):
         pass
 
-    n_hidden = 100
+    n_hidden = 128
     n_layers = 3
     embedding_size = 300
     n_tags = 2
