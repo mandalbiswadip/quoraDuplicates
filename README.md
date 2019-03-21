@@ -5,9 +5,9 @@ python evaluate.py sentence1 sentence2
 ```
 
 
-#### Web server
+#### Web server(accessable from machine)
 ```
-curl -X POST 'http://10.10.10.10/?sentence1=This%20is%20sentence%201.&sentence2=This%20is%20sentence%202.'
+curl -X POST 'http://0.0.0.0/?sentence1=This%20is%20sentence%201.&sentence2=This%20is%20sentence%202.'
 ```
 
 #### Network Architechture
