@@ -216,9 +216,11 @@ class Model:
             self.question_two: sent_2,
             self.seql_one: sent_1_len,
             self.seql_two: sent_2_len,
-            self.labels: label
 
         }
+        if label:
+            feed_data[self.labels] = label
+
 
         return feed_data
 
