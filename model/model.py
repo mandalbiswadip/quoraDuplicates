@@ -139,6 +139,8 @@ class Model:
         n_batches = int((len(train_data) + config.batch_size - 1) / config.batch_size)
 
         t_loss = 0
+        c = 0
+        tot_ac = 0
         for i, (sent_1, sent_2, sent_1_lengths, sent_2_lengths, label) in tqdm_notebook(enumerate(
                 minibatches(train_data, config.batch_size))):
             max_len_1 = max(sent_1_lengths)
@@ -153,10 +155,10 @@ class Model:
                 sent_2_lengths,
                 label
             )
-            reverse_feed_dict = self.get_feed_dict(sent_1, sent_2, sent_1_lengths, sent_2_lengths, label)
+            reverse_feed_dict = self.get_feed_dict(sent_2, sent_1, sent_2_lengths, sent_1_lengths, label)
             try:
-                _, loss, summary = self.sess.run([
-                    self.optimize, self.loss, self.merged], feed_dict=feed_dict
+                _, loss, summary, accuracy = self.sess.run([
+                    self.optimize, self.loss, self.merged, self.accuracy], feed_dict=feed_dict
                 )
                 _, loss, summary = self.sess.run([
                     self.optimize, self.loss, self.merged], feed_dict=reverse_feed_dict
@@ -166,9 +168,13 @@ class Model:
                     self.file_writer.add_summary(summary=summary)
 
                 t_loss += loss
+                tot_ac += accuracy
+                c+=1
             except Exception as e:
                 print(str(e))
         print('At epoch {} loss is..{}'.format(epoch, str(float(t_loss) / n_batches)))
+        print('At epoch {} training accuracy is..{}'.format(epoch, str(float(tot_ac) / c)))
+
 
         c = 0
         tot_ac = 0
