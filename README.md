@@ -21,6 +21,6 @@ Entopy has been used as a loss function for the same.
 
 
 ##### Baseline accuracy:
-Train accuracy:
+Train accuracy: 80.76 %
 
-Test accuracy:
+Test accuracy: 72.83 %
