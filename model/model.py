@@ -1,5 +1,7 @@
 import os
 
+from tqdm import tqdm_notebook
+
 import tensorflow as tf
 from config import Config
 from data_utils import minibatches, pad_sequence
@@ -134,8 +136,8 @@ class Model:
         n_batches = int((len(train_data) + config.batch_size - 1) / config.batch_size)
 
         t_loss = 0
-        for i, (sent_1, sent_2, sent_1_lengths, sent_2_lengths, label) in enumerate(
-                minibatches(train_data, config.batch_size)):
+        for i, (sent_1, sent_2, sent_1_lengths, sent_2_lengths, label) in tqdm_notebook(enumerate(
+                minibatches(train_data, config.batch_size))):
             max_len_1 = max(sent_1_lengths)
             max_len_2 = max(sent_2_lengths)
 
@@ -167,8 +169,8 @@ class Model:
 
         c = 0
         tot_ac = 0
-        for i, (dev_texts_1, dev_texts_2, dev_texts_lens_1, dev_texts_lens_2, dev_label) in enumerate(
-                minibatches(dev_data, config.batch_size)):
+        for i, (dev_texts_1, dev_texts_2, dev_texts_lens_1, dev_texts_lens_2, dev_label) in tqdm_notebook(enumerate(
+                                                                                        minibatches(dev_data, config.batch_size))):
             max_len_1 = max(dev_texts_lens_1)
             max_len_2 = max(dev_texts_lens_2)
 
