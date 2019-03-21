@@ -9,6 +9,7 @@ import tensorflow as tf
 from model import Model
 from config import Config
 from embedding import get_embedding
+from data_utils import tokenize_sent
 
 config = Config()
 
@@ -33,8 +34,8 @@ def get_if_duplicate(sentence1, sentence2):
         pass
         # global model
         # if sentence1 and sentence2:
-        #     sentence1 = str(sentence1).lower().split()
-        #     sentence2 = str(sentence2).lower().split()
+        #     sentence1 = tokenize_sent(str(sentence1).lower())
+        #     sentence2 = tokenize_sent(str(sentence2).lower())
         #     sentence1 = [get_embedding(w) for w in sentence1]
         #     sentence2 = [get_embedding(w) for w in sentence2]
         #
@@ -54,7 +55,7 @@ def get_if_duplicate(sentence1, sentence2):
         #     )
 
     except Exception as e:
-        pass
+        print(str(e))
     return dup_dict[is_duplicate]
 
 if __name__=="__main__":
