@@ -7,6 +7,8 @@ i.e. python evaluate.py "what do you think of bollywood" "what is your view on b
 
 result - 'Yes'
 ```
+NOTE: The above script can be changed to have multiple data points as inputs. 
+The script will load the word embedding each time it is run using the avove command. It is better to modify the above script if multiple data points are to be tested
 
 
 #### Web server(accessable from machine)
