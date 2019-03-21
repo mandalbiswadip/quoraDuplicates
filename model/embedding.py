@@ -17,7 +17,6 @@ def get_embedding(word):
             print('loading w2v')
             w2v = KeyedVectors.load_word2vec_format(
                 config.embedding_path,
-                # '/home/biswadip/Documents/repos/GoogleNews-vectors-negative300.bin',
                 binary=True
             )
 

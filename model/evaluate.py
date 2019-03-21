@@ -1,10 +1,6 @@
 import warnings
+
 warnings.filterwarnings("ignore")
-
-from flask import Flask
-from flask_cors import CORS
-
-import tensorflow as tf
 
 from model import Model
 from config import Config
@@ -12,13 +8,9 @@ from embedding import get_embedding
 
 config = Config()
 
-app = Flask(__name__)
-
-CORS(app)
-
 dup_dict = {
-    0:'No',
-    1:'Yes'
+    0: 'No',
+    1: 'Yes'
 }
 
 model = Model()
@@ -26,7 +18,6 @@ model.build()
 model.restore_session(config.save_dir)
 
 
-@app.route('/<sentence1>&<sentence2>', methods=['GET','POST'])
 def get_if_duplicate(sentence1, sentence2):
     is_duplicate = 0
     try:
@@ -40,22 +31,26 @@ def get_if_duplicate(sentence1, sentence2):
             len1 = len(sentence1)
             len2 = len(sentence2)
 
-
             is_duplicate = model.sess.run(
-                        model.is_duplicate,
-                        feed_dict = model.get_feed_dict(
-                                        sentence1,
-                                        sentence2,
-                                        len1,
-                                        len2,
-                                        None
-                    )
+                model.is_duplicate,
+                feed_dict=model.get_feed_dict(
+                    sentence1,
+                    sentence2,
+                    len1,
+                    len2,
+                    None
+                )
             )
 
     except Exception as e:
         pass
     return dup_dict[is_duplicate]
 
-if __name__=="__main__":
-    app.debug = True
-    app.run(host='0.0.0.0', threaded=True)
+
+if __name__ == "__main__":
+    import sys
+
+    sentence1 = sys.argv[1]
+    sentence2 = sys.argv[2]
+
+    print(get_if_duplicate(sentence1, sentence2))
