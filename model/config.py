@@ -20,7 +20,7 @@ class Config:
     lr = 0.01
     decay_step = 1000
     decay_rate = 0.9
-    dropout_prob = 0.9
+    keep_prob = 0.9
 
     epoch = 100
     batch_size = 256
