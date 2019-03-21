@@ -32,21 +32,22 @@ def get_if_duplicate(sentence1, sentence2):
             len1 = len(sentence1)
             len2 = len(sentence2)
 
-            is_duplicate, pred = model.sess.run(
+            results, pred = model.sess.run(
                 [model.is_duplicate, model.pred],
                 feed_dict=model.get_feed_dict(
                     [sentence1],
                     [sentence2],
                     [len1],
                     [len2],
-                    None
+                    [0]
                 )
             )
+            is_duplicate = results[0]
             print(pred[0])
 
     except Exception as e:
         print(str(e))
-    return dup_dict[is_duplicate[0]]
+    return dup_dict[is_duplicate]
 
 
 if __name__ == "__main__":
