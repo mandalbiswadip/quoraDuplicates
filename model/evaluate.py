@@ -39,7 +39,7 @@ def get_if_duplicate(sentence1, sentence2):
                     [sentence2],
                     [len1],
                     [len2],
-                    [0]
+                    None
                 )
             )
             is_duplicate = results[0]
