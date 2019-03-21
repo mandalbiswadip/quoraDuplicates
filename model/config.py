@@ -22,7 +22,7 @@ class Config:
     decay_rate = 0.9
 
     epoch = 100
-    batch_size = 128
+    batch_size = 256
     saving_freq = 2
     summary_freq = 10
 

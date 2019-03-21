@@ -31,28 +31,28 @@ dup_dict = {
 def get_if_duplicate(sentence1, sentence2):
     is_duplicate = 0
     try:
-        pass
-        # global model
-        # if sentence1 and sentence2:
-        #     sentence1 = tokenize_sent(str(sentence1).lower())
-        #     sentence2 = tokenize_sent(str(sentence2).lower())
-        #     sentence1 = [get_embedding(w) for w in sentence1]
-        #     sentence2 = [get_embedding(w) for w in sentence2]
-        #
-        #     len1 = len(sentence1)
-        #     len2 = len(sentence2)
-        #
-        #
-        #     is_duplicate = model.sess.run(
-        #                 model.is_duplicate,
-        #                 feed_dict = model.get_feed_dict(
-        #                                 sentence1,
-        #                                 sentence2,
-        #                                 len1,
-        #                                 len2,
-        #                                 None
-        #             )
-        #     )
+        global model
+        if sentence1 and sentence2:
+            sentence1 = tokenize_sent(str(sentence1).lower())
+            sentence2 = tokenize_sent(str(sentence2).lower())
+            sentence1 = [get_embedding(w) for w in sentence1]
+            sentence2 = [get_embedding(w) for w in sentence2]
+
+            len1 = len(sentence1)
+            len2 = len(sentence2)
+
+
+            results = model.sess.run(
+                        model.is_duplicate,
+                        feed_dict = model.get_feed_dict(
+                                        [sentence1],
+                                        [sentence2],
+                                        [len1],
+                                        [len2],
+                                        None
+                    )
+            )
+            is_duplicate = results[0]
 
     except Exception as e:
         print(str(e))
