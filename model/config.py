@@ -11,7 +11,7 @@ class Config:
         pass
 
     n_hidden = 256
-    n_layers = 2
+    n_layers = 4
     embedding_size = 300
     n_tags = 2
     # max_sent_len = 70

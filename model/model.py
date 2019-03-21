@@ -1,10 +1,9 @@
 import os
 
-from tqdm import tqdm_notebook
-
 import tensorflow as tf
 from config import Config
 from data_utils import minibatches, pad_sequence
+from tqdm import tqdm_notebook
 
 config = Config()
 
@@ -142,7 +141,8 @@ class Model:
         c = 0
         tot_ac = 0
         for i, (sent_1, sent_2, sent_1_lengths, sent_2_lengths, label) in tqdm_notebook(enumerate(
-                minibatches(train_data, config.batch_size))):
+                minibatches(train_data,
+                            config.batch_size))):
             max_len_1 = max(sent_1_lengths)
             max_len_2 = max(sent_2_lengths)
 
@@ -155,7 +155,11 @@ class Model:
                 sent_2_lengths,
                 label
             )
-            reverse_feed_dict = self.get_feed_dict(sent_2, sent_1, sent_2_lengths, sent_1_lengths, label)
+            reverse_feed_dict = self.get_feed_dict(sent_2,
+                                                   sent_1,
+                                                   sent_2_lengths,
+                                                   sent_1_lengths,
+                                                   label)
             try:
                 _, loss, summary, accuracy = self.sess.run([
                     self.optimize, self.loss, self.merged, self.accuracy], feed_dict=feed_dict
@@ -169,17 +173,16 @@ class Model:
 
                 t_loss += loss
                 tot_ac += accuracy
-                c+=1
+                c += 1
             except Exception as e:
                 print(str(e))
         print('At epoch {} loss is..{}'.format(epoch, str(float(t_loss) / n_batches)))
         print('At epoch {} training accuracy is..{}'.format(epoch, str(float(tot_ac) / c)))
 
-
         c = 0
         tot_ac = 0
         for i, (dev_texts_1, dev_texts_2, dev_texts_lens_1, dev_texts_lens_2, dev_label) in tqdm_notebook(enumerate(
-                                                                                        minibatches(dev_data, config.batch_size))):
+                minibatches(dev_data, config.batch_size))):
             max_len_1 = max(dev_texts_lens_1)
             max_len_2 = max(dev_texts_lens_2)
 
@@ -201,7 +204,7 @@ class Model:
                 print(str(e))
         print('At epoch {} dev acc..{}'.format(epoch, str(float(tot_ac) / c)))
         print('=' * 50)
-            # break
+        # break
 
     def train(self, train_data, dev_data):
 
@@ -210,7 +213,7 @@ class Model:
         for i in range(config.epoch):
             self.run_epoch(train_data, dev_data, i)
 
-            if i % config.saving_freq==0:
+            if i % config.saving_freq == 0:
                 self.save_session()
 
     def get_feed_dict(self,
@@ -229,7 +232,6 @@ class Model:
         }
         if label:
             feed_data[self.labels] = label
-
 
         return feed_data
 

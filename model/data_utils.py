@@ -1,12 +1,12 @@
 import re
 
 
-
 def tokenize_sent(sent):
     tokens = []
     if sent:
-        tokens = [x for x in re.split(r'\W+',sent) if x]
+        tokens = [x for x in re.split(r'\W+', sent) if x]
     return tokens
+
 
 def minibatches(data, minibatch_size):
     """
@@ -34,6 +34,7 @@ def minibatches(data, minibatch_size):
 
     if len(x_batch) != 0:
         yield x_batch, y_batch, z_batch, a_batch, b_batch
+
 
 def pad_sequence(seqs, max_len, pad_by):
     """
