@@ -10,8 +10,8 @@ class Config:
     def __init__(self):
         pass
 
-    n_hidden = 128
-    n_layers = 3
+    n_hidden = 256
+    n_layers = 2
     embedding_size = 300
     n_tags = 2
     # max_sent_len = 70
