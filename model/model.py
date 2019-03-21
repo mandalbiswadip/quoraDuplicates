@@ -188,8 +188,8 @@ class Model:
                 tot_ac += accr
             except Exception as e:
                 print(str(e))
-            print('At epoch {} dev acc..{}'.format(epoch, str(float(tot_ac) / c)))
-            print('=' * 50)
+        print('At epoch {} dev acc..{}'.format(epoch, str(float(tot_ac) / c)))
+        print('=' * 50)
             # break
 
     def train(self, train_data, dev_data):
