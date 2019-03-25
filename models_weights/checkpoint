@@ -1,0 +1,2 @@
+model_checkpoint_path: "/home/biswadip/Documents/repos/exp/Quora_Kaggle/models_weights/"
+all_model_checkpoint_paths: "/home/biswadip/Documents/repos/exp/Quora_Kaggle/models_weights/"

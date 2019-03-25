@@ -6,8 +6,8 @@ env/
 
 #results
 
-results/
-models_weights/
+# results/
+# models_weights/
 
 #scripts
 xgb.py
@@ -27,5 +27,5 @@ train.csv
 test.csv
 
 #model-weights
-models_weights/
-results/
+# models_weights/
+# results/
