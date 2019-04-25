@@ -66,6 +66,7 @@ class Model:
     def add_logit_op(self):
 
         if config.triplet_loss:
+            self.labels = tf.cast(self.labels, tf.float32)
             with tf.variable_scope('triplet'):
                 self.l2 = tf.norm(self.state_one - self.state_two, 'euclidean', axis=-1)
 
