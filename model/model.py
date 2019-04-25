@@ -66,9 +66,14 @@ class Model:
     def add_logit_op(self):
 
         if config.triplet_loss:
+
+            self.state_one = tf.nn.l2_normalize(self.state_one, axis=-1)
+            self.state_two = tf.nn.l2_normalize(self.state_two, axis=-1)
+
             self.labels = tf.cast(self.labels, tf.float32)
             with tf.variable_scope('triplet'):
-                self.l2 = tf.norm(self.state_one - self.state_two, 'euclidean', axis=-1)
+                self.l2 = tf.norm(self.state_one -
+                                  self.state_two, 'euclidean', axis=-1)
 
         else:
             with tf.variable_scope('proj'):
@@ -254,8 +259,8 @@ class Model:
                 print(str(e))
 
         if config.triplet_loss:
-            print(('At epoch {} training pos l2 mean is..{}'.format(epoch, str(float(pos_loss) / c))))
-            print(('At epoch {} training neg l2 mean is..{}'.format(epoch, str(float(neg_loss) / c))))
+            print(('At epoch {} test pos l2 mean is..{}'.format(epoch, str(float(pos_loss) / c))))
+            print(('At epoch {} test neg l2 mean is..{}'.format(epoch, str(float(neg_loss) / c))))
         else:
             print('At epoch {} dev acc..{}'.format(epoch, str(float(tot_ac) / c)))
         print('=' * 50)
