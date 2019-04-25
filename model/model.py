@@ -59,28 +59,43 @@ class Model:
             # [batch_size, 2*hidden_size]
             # self.state_two = tf.concat([state_two_fw, state_two_bw], axis=-1)
 
+    def add_triplet_loss(self):
+        with tf.variable_scope('triplet'):
+            self.l2 = tf.norm(self.state_one - self.state_two, 'euclidean', axis=-1)
+
     def add_logit_op(self):
-        with tf.variable_scope('proj'):
-            self.state = tf.concat([self.state_one, self.state_two], name='state', axis=-1)
-            # size[batch_size, 4*hidden_size)
 
-            W = tf.get_variable('W', dtype=tf.float32,
-                                shape=[4 * config.n_hidden, config.n_tags],
-                                initializer=tf.truncated_normal_initializer())
+        if config.triplet_loss:
+            with tf.variable_scope('triplet'):
+                self.l2 = tf.norm(self.state_one - self.state_two, 'euclidean', axis=-1)
 
-            b = tf.get_variable('b', shape=[config.n_tags],
-                                dtype=tf.float32, initializer=tf.truncated_normal_initializer())
+        else:
+            with tf.variable_scope('proj'):
+                self.state = tf.concat([self.state_one, self.state_two], name='state', axis=-1)
+                # size[batch_size, 4*hidden_size)
 
-            self.logits = tf.matmul(self.state, W) + b
-            self.pred = tf.nn.softmax(self.logits)
-            self.is_duplicate = tf.argmax(self.pred, axis=-1)
+                W = tf.get_variable('W', dtype=tf.float32,
+                                    shape=[4 * config.n_hidden, config.n_tags],
+                                    initializer=tf.truncated_normal_initializer())
+
+                b = tf.get_variable('b', shape=[config.n_tags],
+                                    dtype=tf.float32, initializer=tf.truncated_normal_initializer())
+
+                self.logits = tf.matmul(self.state, W) + b
+                self.pred = tf.nn.softmax(self.logits)
+                self.is_duplicate = tf.argmax(self.pred, axis=-1)
 
     def add_loss_op(self):
         with tf.variable_scope('loss'):
             # self.labels = tf.one_hot(self.labels, depth=config.n_tags)
 
-            self.loss = tf.reduce_mean(
-                tf.nn.sparse_softmax_cross_entropy_with_logits(logits=self.logits, labels=self.labels,
+            if config.triplet_loss:
+                self.loss = tf.reduce_mean(self.labels*self.l2 - (1- self.labels)*self.l2, name='loss',axis=-1)
+                self.pos_l2_mean = tf.reduce_mean(self.labels*self.l2, name='pos_l2')
+                self.neg_l2_mean = tf.reduce_mean((1-self.labels)*self.l2, name='neg_l2')
+            else:
+                self.loss = tf.reduce_mean(
+                    tf.nn.sparse_softmax_cross_entropy_with_logits(logits=self.logits, labels=self.labels,
                                                                name='loss'))
             tf.summary.scalar('loss', self.loss)
 
@@ -97,10 +112,10 @@ class Model:
                                                                            global_step=global_step,
                                                                            # var_list=tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope=[])
                                                                            )
+            if not config.triplet_loss:
+                self.mistakes = tf.equal(tf.argmax(self.pred, axis=-1, output_type=tf.int32), self.labels)
 
-            self.mistakes = tf.equal(tf.argmax(self.pred, axis=-1, output_type=tf.int32), self.labels)
-
-            self.accuracy = tf.reduce_mean(tf.cast(self.mistakes, tf.float32))
+                self.accuracy = tf.reduce_mean(tf.cast(self.mistakes, tf.float32))
 
     def initialize_session(self):
         self.sess = tf.Session()
@@ -140,6 +155,8 @@ class Model:
         t_loss = 0
         c = 0
         tot_ac = 0
+        pos_loss = 0
+        neg_loss = 0
         for i, (sent_1, sent_2, sent_1_lengths, sent_2_lengths, label) in tqdm_notebook(enumerate(
                 minibatches(train_data,
                             config.batch_size))):
@@ -161,26 +178,44 @@ class Model:
                                                    sent_1_lengths,
                                                    label)
             try:
-                _, loss, summary, accuracy = self.sess.run([
-                    self.optimize, self.loss, self.merged, self.accuracy], feed_dict=feed_dict
-                )
-                _, loss, summary = self.sess.run([
-                    self.optimize, self.loss, self.merged], feed_dict=reverse_feed_dict
-                )
+                if config.triplet_loss:
+                    _, loss, summary, pos_l2, neg_l2 = self.sess.run([self.optimize,
+                                                                      self.loss,
+                                                                      self.merged,
+                                                                      self.pos_l2_mean,
+                                                                      self.neg_l2_mean], feed_dict=feed_dict)
+                    pos_loss += pos_l2
+                    neg_loss += neg_l2
+                else:
+
+                    _, loss, summary, accuracy = self.sess.run([
+                        self.optimize, self.loss, self.merged, self.accuracy], feed_dict=feed_dict
+                    )
+                    _, loss, summary = self.sess.run([
+                        self.optimize, self.loss, self.merged], feed_dict=reverse_feed_dict
+                    )
+                    tot_ac += accuracy
 
                 if i % config.summary_freq:
                     self.file_writer.add_summary(summary=summary)
 
                 t_loss += loss
-                tot_ac += accuracy
                 c += 1
             except Exception as e:
                 print(str(e))
         print('At epoch {} loss is..{}'.format(epoch, str(float(t_loss) / n_batches)))
-        print('At epoch {} training accuracy is..{}'.format(epoch, str(float(tot_ac) / c)))
+
+        if config.triplet_loss:
+            print(('At epoch {} training pos l2 mean is..{}'.format(epoch, str(float(pos_loss) / c))))
+            print(('At epoch {} training neg l2 mean is..{}'.format(epoch, str(float(neg_loss) / c))))
+        else:
+            print('At epoch {} training accuracy is..{}'.format(epoch, str(float(tot_ac) / c)))
+
 
         c = 0
         tot_ac = 0
+        pos_loss = 0
+        neg_loss = 0
         for i, (dev_texts_1, dev_texts_2, dev_texts_lens_1, dev_texts_lens_2, dev_label) in tqdm_notebook(enumerate(
                 minibatches(dev_data, config.batch_size))):
             max_len_1 = max(dev_texts_lens_1)
@@ -189,20 +224,39 @@ class Model:
             dev_texts_1, _ = pad_sequence(dev_texts_1, max_len_1, pad_item)
             dev_texts_2, _ = pad_sequence(dev_texts_2, max_len_2, pad_item)
             try:
-                accr = self.sess.run(
-                    self.accuracy, feed_dict=self.get_feed_dict(
-                        dev_texts_1,
-                        dev_texts_2,
-                        dev_texts_lens_1,
-                        dev_texts_lens_2,
-                        dev_label
+                if config.triplet_loss:
+                    pos_l2, neg_l2  = self.sess.run(
+                        [self.pos_l2_mean, self.neg_l2_mean], feed_dict=self.get_feed_dict(
+                            dev_texts_1,
+                            dev_texts_2,
+                            dev_texts_lens_1,
+                            dev_texts_lens_2,
+                            dev_label
+                        )
                     )
-                )
+                    pos_loss += pos_l2
+                    neg_loss += neg_l2
+                else:
+                    accr = self.sess.run(
+                        self.accuracy, feed_dict=self.get_feed_dict(
+                            dev_texts_1,
+                            dev_texts_2,
+                            dev_texts_lens_1,
+                            dev_texts_lens_2,
+                            dev_label
+                        )
+                    )
+                    tot_ac += accr
+
                 c += 1
-                tot_ac += accr
             except Exception as e:
                 print(str(e))
-        print('At epoch {} dev acc..{}'.format(epoch, str(float(tot_ac) / c)))
+
+        if config.triplet_loss:
+            print(('At epoch {} training pos l2 mean is..{}'.format(epoch, str(float(pos_loss) / c))))
+            print(('At epoch {} training neg l2 mean is..{}'.format(epoch, str(float(neg_loss) / c))))
+        else:
+            print('At epoch {} dev acc..{}'.format(epoch, str(float(tot_ac) / c)))
         print('=' * 50)
         # break
 

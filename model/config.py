@@ -27,6 +27,8 @@ class Config:
     saving_freq = 2
     summary_freq = 10
 
+    triplet_loss = True
+
     save_dir = PROJECT_HOME + '/models_weights/'
     summary_dir = PROJECT_HOME + '/results/'
     embedding_path = PROJECT_HOME + '/GoogleNews-vectors-negative300.bin'
