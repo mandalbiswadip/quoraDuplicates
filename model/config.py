@@ -23,7 +23,7 @@ class Config:
     keep_prob = 0.7
 
     epoch = 100
-    batch_size = 256
+    batch_size = 32
     saving_freq = 2
     summary_freq = 10
 

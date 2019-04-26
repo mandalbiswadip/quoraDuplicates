@@ -73,7 +73,7 @@ class Model:
             self.labels = tf.cast(self.labels, tf.float32)
             with tf.variable_scope('triplet'):
                 self.l2 = tf.norm(self.state_one -
-                                  self.state_two, 'euclidean', axis=-1)
+                                  self.state_two, 'euclidean', axis=-1, name='l2')
 
         else:
             with tf.variable_scope('proj'):
@@ -281,7 +281,7 @@ class Model:
                       sent_2,
                       sent_1_len,
                       sent_2_len,
-                      label
+                      label=None
                       ):
         feed_data = {
             self.question_one: sent_1,
