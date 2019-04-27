@@ -17,10 +17,10 @@ class Config:
     # max_sent_len = 70
 
     #learning
-    lr = 0.01
+    lr = 0.005
     decay_step = 1000
-    decay_rate = 0.9
-    keep_prob = 0.7
+    decay_rate = 0.8
+    keep_prob = 1
 
     epoch = 100
     batch_size = 32
