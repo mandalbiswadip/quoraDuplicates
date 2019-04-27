@@ -36,7 +36,7 @@ class Model:
 
     def add_lstm_op(self):
 
-        with tf.variable_scope('lstm'):
+        with tf.variable_scope('lstm', reuse=tf.AUTO_REUSE):
             cells_fw = self.get_multirnn_cell()
             cells_bw = self.get_multirnn_cell()
             cell_fw = tf.nn.rnn_cell.MultiRNNCell(cells_fw)
