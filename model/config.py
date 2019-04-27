@@ -17,7 +17,7 @@ class Config:
     # max_sent_len = 70
 
     #learning
-    lr = 0.005
+    lr = 0.08
     decay_step = 1000
     decay_rate = 0.8
     keep_prob = 1
