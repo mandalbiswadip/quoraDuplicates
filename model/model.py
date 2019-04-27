@@ -125,7 +125,7 @@ class Model:
                 optimizer = tf.train.AdamOptimizer(learning_rate)
                 gvs = optimizer.compute_gradients(self.loss)
                 capped_gvs = [(tf.clip_by_value(grad, -1., 1.), var) for grad, var in gvs]
-                self.optimize = optimizer.apply_gradients(capped_gvs)
+                self.optimize = optimizer.apply_gradients(capped_gvs, global_step=global_step)
             else:
                 self.optimize = tf.train.AdamOptimizer(learning_rate).minimize(loss=self.loss,
                                                                            global_step=global_step,
