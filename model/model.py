@@ -120,7 +120,14 @@ class Model:
                 starter_learning_rate, global_step,
                 self.config.decay_step, self.config.decay_rate, staircase=True
             )
-            self.optimize = tf.train.AdamOptimizer(learning_rate).minimize(loss=self.loss,
+
+            if self.config.gradient_clipping:
+                optimizer = tf.train.AdamOptimizer(learning_rate)
+                gvs = optimizer.compute_gradients(self.loss)
+                capped_gvs = [(tf.clip_by_value(grad, -1., 1.), var) for grad, var in gvs]
+                self.optimize = optimizer.apply_gradients(capped_gvs)
+            else:
+                self.optimize = tf.train.AdamOptimizer(learning_rate).minimize(loss=self.loss,
                                                                            global_step=global_step,
                                                                            # var_list=tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope=[])
                                                                            )

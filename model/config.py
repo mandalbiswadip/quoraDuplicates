@@ -28,6 +28,7 @@ class Config:
     summary_freq = 10
 
     triplet_loss = True
+    gradient_clipping = True
 
     save_dir = PROJECT_HOME + '/models_weights/'
     summary_dir = PROJECT_HOME + '/results/'
