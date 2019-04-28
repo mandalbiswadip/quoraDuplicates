@@ -108,6 +108,13 @@ class Model:
                 self.loss = tf.reduce_mean(
                     tf.nn.sparse_softmax_cross_entropy_with_logits(logits=self.logits, labels=self.labels,
                                                                    name='loss'))
+
+            l2 = self.config.lambda_l2_reg * sum(
+                tf.nn.l2_loss(tf_var)
+                for tf_var in tf.trainable_variables()
+                if not ("noreg" in tf_var.name or "Bias" in tf_var.name)
+            )
+            self.loss += l2
             tf.summary.scalar('loss', self.loss)
 
 

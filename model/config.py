@@ -20,6 +20,7 @@ class Config:
     lr = 0.08
     decay_step = 1000
     decay_rate = 0.8
+    lambda_l2_reg = 0.005
     keep_prob = 1
 
     epoch = 100
