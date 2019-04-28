@@ -30,7 +30,7 @@ class Model:
     def get_multirnn_cell(self):
         cells = []
         for _ in range(self.config.n_layers):
-            cell = tf.nn.rnn_cell.LSTMCell(self.config.n_hidden, initializer=tf.truncated_normal_initializer())
+            cell = tf.nn.rnn_cell.LSTMCell(self.config.n_hidden, initializer=tf.random_normal_initializer())
             dropout_cell = tf.nn.rnn_cell.DropoutWrapper(cell=cell,
                                                          input_keep_prob=self.config.keep_prob,
                                                          output_keep_prob=self.config.keep_prob)
@@ -124,7 +124,13 @@ class Model:
             if self.config.gradient_clipping:
                 optimizer = tf.train.AdamOptimizer(learning_rate)
                 gvs = optimizer.compute_gradients(self.loss)
+
+                l2_norm = lambda t: tf.sqrt(tf.reduce_sum(tf.pow(t, 2)))
+
                 capped_gvs = [(tf.clip_by_value(grad, -1., 1.), var) for grad, var in gvs]
+                for gradient, variable in gvs:
+                    tf.summary.histogram("gradients/" + variable.name, l2_norm(gradient))
+                    tf.summary.histogram("variables/" + variable.name, l2_norm(variable))
                 self.optimize = optimizer.apply_gradients(capped_gvs, global_step=global_step)
             else:
                 self.optimize = tf.train.AdamOptimizer(learning_rate).minimize(loss=self.loss,
