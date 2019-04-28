@@ -216,7 +216,7 @@ class Model:
                                                    label)
             try:
                 if self.config.triplet_loss:
-                    _, loss, summary, pos_l2, neg_l2, gr = self.sess.run([self.optimize,
+                    _, loss, summary, pos_l2, neg_l2 = self.sess.run([self.optimize,
                                                                       self.loss,
                                                                       self.merged,
                                                                       self.pos_l2_mean,
