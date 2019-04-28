@@ -223,7 +223,7 @@ class Model:
                                                                       self.capped_gvs], feed_dict=feed_dict)
                     pos_loss += pos_l2
                     neg_loss += neg_l2
-                    print(gr)
+                    # print(gr)
                 else:
 
                     _, loss, summary, accuracy = self.sess.run([
