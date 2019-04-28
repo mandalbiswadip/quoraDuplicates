@@ -101,7 +101,7 @@ class Model:
             # self.labels = tf.one_hot(self.labels, depth=self.config.n_tags)
 
             if self.config.triplet_loss:
-                self.loss = tf.reduce_mean(self.labels * self.l2 - (1 - self.labels) * self.l2, name='loss', axis=-1) + 1e-8
+                self.loss = tf.reduce_mean(self.labels * self.l2 - (1 - self.labels) * self.l2, name='loss', axis=-1)
                 self.pos_l2_mean = tf.reduce_mean(self.labels * self.l2, name='pos_l2')
                 self.neg_l2_mean = tf.reduce_mean((1 - self.labels) * self.l2, name='neg_l2')
             else:
@@ -127,11 +127,11 @@ class Model:
 
                 l2_norm = lambda t: tf.sqrt(tf.reduce_mean(tf.pow(t, 2)))
 
-                capped_gvs = [(tf.clip_by_value(grad, -1., 1.), var) for grad, var in gvs]
-                for gradient, variable in capped_gvs:
+                self.capped_gvs = [(tf.clip_by_value(grad, -1., 1.), var) for grad, var in gvs]
+                for gradient, variable in self.capped_gvs:
                     tf.summary.histogram("gradients/" + variable.name, gradient)
                     tf.summary.histogram("variables/" + variable.name, variable)
-                self.optimize = optimizer.apply_gradients(capped_gvs, global_step=global_step)
+                self.optimize = optimizer.apply_gradients(self.capped_gvs, global_step=global_step)
             else:
                 self.optimize = tf.train.AdamOptimizer(learning_rate).minimize(loss=self.loss,
                                                                            global_step=global_step,
@@ -208,13 +208,15 @@ class Model:
                                                    label)
             try:
                 if self.config.triplet_loss:
-                    _, loss, summary, pos_l2, neg_l2 = self.sess.run([self.optimize,
+                    _, loss, summary, pos_l2, neg_l2, gr = self.sess.run([self.optimize,
                                                                       self.loss,
                                                                       self.merged,
                                                                       self.pos_l2_mean,
-                                                                      self.neg_l2_mean], feed_dict=feed_dict)
+                                                                      self.neg_l2_mean,
+                                                                      self.capped_gvs], feed_dict=feed_dict)
                     pos_loss += pos_l2
                     neg_loss += neg_l2
+                    print(gr)
                 else:
 
                     _, loss, summary, accuracy = self.sess.run([
