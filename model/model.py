@@ -219,8 +219,7 @@ class Model:
                                                                       self.loss,
                                                                       self.merged,
                                                                       self.pos_l2_mean,
-                                                                      self.neg_l2_mean,
-                                                                      self.capped_gvs], feed_dict=feed_dict)
+                                                                      self.neg_l2_mean], feed_dict=feed_dict)
                     pos_loss += pos_l2
                     neg_loss += neg_l2
                     # print(gr)
