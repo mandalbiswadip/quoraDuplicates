@@ -125,12 +125,12 @@ class Model:
                 optimizer = tf.train.AdamOptimizer(learning_rate)
                 gvs = optimizer.compute_gradients(self.loss)
 
-                l2_norm = lambda t: tf.sqrt(tf.reduce_sum(tf.pow(t, 2)))
+                l2_norm = lambda t: tf.sqrt(tf.reduce_mean(tf.pow(t, 2)))
 
                 capped_gvs = [(tf.clip_by_value(grad, -1., 1.), var) for grad, var in gvs]
                 for gradient, variable in capped_gvs:
-                    tf.summary.histogram("gradients/" + variable.name, l2_norm(gradient))
-                    tf.summary.histogram("variables/" + variable.name, l2_norm(variable))
+                    tf.summary.histogram("gradients/" + variable.name, gradient)
+                    tf.summary.histogram("variables/" + variable.name, variable)
                 self.optimize = optimizer.apply_gradients(capped_gvs, global_step=global_step)
             else:
                 self.optimize = tf.train.AdamOptimizer(learning_rate).minimize(loss=self.loss,
