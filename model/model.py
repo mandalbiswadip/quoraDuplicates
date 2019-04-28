@@ -128,7 +128,7 @@ class Model:
                 l2_norm = lambda t: tf.sqrt(tf.reduce_sum(tf.pow(t, 2)))
 
                 capped_gvs = [(tf.clip_by_value(grad, -1., 1.), var) for grad, var in gvs]
-                for gradient, variable in gvs:
+                for gradient, variable in capped_gvs:
                     tf.summary.histogram("gradients/" + variable.name, l2_norm(gradient))
                     tf.summary.histogram("variables/" + variable.name, l2_norm(variable))
                 self.optimize = optimizer.apply_gradients(capped_gvs, global_step=global_step)
