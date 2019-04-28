@@ -31,7 +31,7 @@ class Model:
     def get_multirnn_cell(self):
         cells = []
         for _ in range(self.config.n_layers):
-            cell = tf.nn.rnn_cell.LSTMCell(self.config.n_hidden, initializer=tf.random_normal_initializer())
+            cell = tf.nn.rnn_cell.LSTMCell(self.config.n_hidden, initializer=tf.glorot_normal_initializer())
             dropout_cell = tf.nn.rnn_cell.DropoutWrapper(cell=cell,
                                                          input_keep_prob=self.config.keep_prob,
                                                          output_keep_prob=self.config.keep_prob)
