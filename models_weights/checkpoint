@@ -1,2 +1,2 @@
-model_checkpoint_path: "/home/biswadip/Documents/repos/exp/Quora_Kaggle/models_weights/"
-all_model_checkpoint_paths: "/home/biswadip/Documents/repos/exp/Quora_Kaggle/models_weights/"
+model_checkpoint_path: "/home/u26008/repos/quora_duplicates/models_weights/"
+all_model_checkpoint_paths: "/home/u26008/repos/quora_duplicates/models_weights/"
