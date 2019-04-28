@@ -101,7 +101,7 @@ class Model:
             # self.labels = tf.one_hot(self.labels, depth=self.config.n_tags)
 
             if self.config.triplet_loss:
-                self.loss = tf.reduce_mean(self.labels * self.l2 - (1 - self.labels) * self.l2, name='loss', axis=-1)
+                self.loss = tf.reduce_mean(self.labels * self.l2 - (1 - self.labels) * self.l2, name='loss', axis=-1) + 1e-8
                 self.pos_l2_mean = tf.reduce_mean(self.labels * self.l2, name='pos_l2')
                 self.neg_l2_mean = tf.reduce_mean((1 - self.labels) * self.l2, name='neg_l2')
             else:
