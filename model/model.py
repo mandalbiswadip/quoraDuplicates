@@ -1,4 +1,5 @@
 import os
+import traceback
 
 import tensorflow as tf
 from config import Config
@@ -240,6 +241,7 @@ class Model:
                 c += 1
             except Exception as e:
                 print(str(e))
+                print(traceback.format_exc())
         print('At epoch {} loss is..{}'.format(epoch, str(float(t_loss) / n_batches)))
 
         if self.config.triplet_loss:
@@ -287,6 +289,7 @@ class Model:
                 c += 1
             except Exception as e:
                 print(str(e))
+                print(traceback.format_exc())
 
         if self.config.triplet_loss:
             print(('At epoch {} test pos l2 mean is..{}'.format(epoch, str(float(pos_loss) / c))))
