@@ -129,22 +129,20 @@ class Model:
                 self.config.decay_step, self.config.decay_rate, staircase=True
             )
 
+            optimizer = tf.train.AdamOptimizer(learning_rate)
+            gvs = optimizer.compute_gradients(self.loss)
+
+
             if self.config.gradient_clipping:
-                optimizer = tf.train.AdamOptimizer(learning_rate)
-                gvs = optimizer.compute_gradients(self.loss)
-
-                l2_norm = lambda t: tf.sqrt(tf.reduce_mean(tf.pow(t, 2)))
-
                 self.capped_gvs = [(tf.clip_by_value(grad, -1., 1.), var) for grad, var in gvs]
-                for gradient, variable in self.capped_gvs:
+            else:
+                self.capped_gvs = gvs
+
+            for gradient, variable in self.capped_gvs:
                     tf.summary.histogram("gradients/" + variable.name, gradient)
                     tf.summary.histogram("variables/" + variable.name, variable)
                 self.optimize = optimizer.apply_gradients(self.capped_gvs, global_step=global_step)
-            else:
-                self.optimize = tf.train.AdamOptimizer(learning_rate).minimize(loss=self.loss,
-                                                                           global_step=global_step,
-                                                                           # var_list=tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope=[])
-                                                                           )
+
             if not self.config.triplet_loss:
                 self.mistakes = tf.equal(tf.argmax(self.pred, axis=-1, output_type=tf.int32), self.labels)
 
