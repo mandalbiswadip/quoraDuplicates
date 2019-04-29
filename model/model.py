@@ -141,7 +141,7 @@ class Model:
             for gradient, variable in self.capped_gvs:
                     tf.summary.histogram("gradients/" + variable.name, gradient)
                     tf.summary.histogram("variables/" + variable.name, variable)
-                self.optimize = optimizer.apply_gradients(self.capped_gvs, global_step=global_step)
+            self.optimize = optimizer.apply_gradients(self.capped_gvs, global_step=global_step)
 
             if not self.config.triplet_loss:
                 self.mistakes = tf.equal(tf.argmax(self.pred, axis=-1, output_type=tf.int32), self.labels)
