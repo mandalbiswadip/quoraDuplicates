@@ -33,4 +33,4 @@ class Config:
 
     save_dir = PROJECT_HOME + '/models_weights/'
     summary_dir = PROJECT_HOME + '/results/'
-    embedding_path = PROJECT_HOME + '/GoogleNews-vectors-negative300.bin'
+    embedding_path = PROJECT_HOME + '/w2v.wv'
