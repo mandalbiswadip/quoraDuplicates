@@ -20,8 +20,8 @@ class Model:
 
     def add_input_op(self):
         with tf.variable_scope('text'):
-            self.question_one = tf.placeholder(tf.float32, name='q1', shape=[None, None, self.embedding_size])
-            self.question_two = tf.placeholder(tf.float32, name='q2', shape=[None, None, self.embedding_size])
+            self.question_one = tf.placeholder(tf.float32, name='q1', shape=[None, None, config.feature_size])
+            self.question_two = tf.placeholder(tf.float32, name='q2', shape=[None, None, config.feature_size])
 
             self.seql_one = tf.placeholder(dtype=tf.int32, name='seql1', shape=[None])
             self.seql_two = tf.placeholder(dtype=tf.int32, name='seql2', shape=[None])
@@ -184,7 +184,7 @@ class Model:
 
 
     def run_epoch(self, train_data, dev_data, epoch):
-        pad_item = [0] * Config.embedding_size
+        pad_item = [0] * self.config.feature_size
         n_batches = int((len(train_data) + self.config.batch_size - 1) / self.config.batch_size)
 
         t_loss = 0

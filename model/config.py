@@ -13,6 +13,7 @@ class Config:
     n_hidden = 128
     n_layers = 3
     embedding_size = 100
+    feature_size = 101
     n_tags = 2
     # max_sent_len = 70
 
