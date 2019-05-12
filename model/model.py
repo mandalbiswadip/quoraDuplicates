@@ -31,6 +31,7 @@ class Model:
     def get_multirnn_cell(self):
         cells = []
         for _ in range(self.config.n_layers):
+            # cell = tf.contrib.rnn.LayerNormBasicLSTMCell(self.config.n_hidden)
             cell = tf.nn.rnn_cell.LSTMCell(self.config.n_hidden, initializer=tf.glorot_normal_initializer())
             dropout_cell = tf.nn.rnn_cell.DropoutWrapper(cell=cell,
                                                          input_keep_prob=self.config.keep_prob,
@@ -63,10 +64,6 @@ class Model:
             # [batch_size, 2*hidden_size]
             # self.state_two = tf.concat([state_two_fw, state_two_bw], axis=-1)
 
-
-    def add_triplet_loss(self):
-        with tf.variable_scope('triplet'):
-            self.l2 = tf.norm(self.state_one - self.state_two, 'euclidean', axis=-1)
 
 
     def add_logit_op(self):
@@ -178,6 +175,8 @@ class Model:
             dir_output: (string) where the results are written
 
         """
+        if not os.path.exists(self.config.summary_dir):
+            os.makedirs(self.config.summary_dir)
         self.merged = tf.summary.merge_all()
         self.file_writer = tf.summary.FileWriter(self.config.summary_dir,
                                                  self.sess.graph)

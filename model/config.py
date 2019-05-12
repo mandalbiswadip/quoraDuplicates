@@ -10,6 +10,7 @@ class Config:
     def __init__(self):
         pass
 
+    PROJECT_HOME = PROJECT_HOME
     n_hidden = 128
     n_layers = 3
     embedding_size = 100
